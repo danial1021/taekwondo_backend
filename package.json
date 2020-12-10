@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "nodemon --exec babel-node app.js --delay 2"
   },
   "dependencies": {
+    "@babel/node": "^7.12.10",
+    "@babel/runtime": "^7.12.5",
+    "@koa/cors": "^3.1.0",
     "debug": "~2.6.8",
     "hjs": "~0.0.6",
     "koa": "^2.3.0",
@@ -19,7 +22,10 @@
     "koa-views": "^6.0.2"
   },
   "devDependencies": {
-    "babel-eslint": "7.1.1",
-    "eslint": "3.18.0"
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "nodemon": "^2.0.6"
   }
 }
