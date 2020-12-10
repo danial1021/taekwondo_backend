@@ -13,9 +13,12 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const debug = require('debug')('koa2:server')
 const path = require('path')
+const mongoose = require('mongoose')
 
-const config = require('./config')
-const routes = require('./routes')
+const config = require('./config/index')
+const User = require('./models/user')
+const index = require('./routes/index');
+const user = require('./routes/user');
 
 const port = process.env.PORT || config.port
 
@@ -44,15 +47,34 @@ app.use(async (ctx, next) => {
   console.log(`${ctx.method} ${ctx.url} - $ms`)
 })
 
-router.get('/', async (ctx, next) => {
-  // ctx.body = 'Hello World'
-  ctx.state = {
-    title: 'Koa2'
+// db 연결 테스트
+mongoose.connect(config.dbUrl,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true
   }
-  await ctx.render('index', ctx.state)
-})
+)
+  .then(() => console.log('MongoDB 연결 성공!'))
+  .catch(() => console.log('MongoDB 연결 실패!'))
 
-routes(router)
+User.findOne({ id: config.admin.id })
+  .then((r) => {
+    if (!r) return User.create({ name: config.admin.name, position: config.admin.position, id: config.admin.id, password: config.admin.password })
+    return Promise.resolve(null)
+  })
+  .then((r) => {
+    if (r) console.log(`admin: ${r.name} created!`)
+  })
+  .catch((e) => {
+    console.error(e.message)
+  })
+
+// router 설정
+app.use(index.routes(), index.allowedMethods());
+app.use(user.routes(), user.allowedMethods());
+
 app.on('error', function(err, ctx) {
   console.log(err)
   logger.error('server error', err, ctx)
