@@ -19,6 +19,7 @@ const config = require('./config/index')
 const User = require('./models/user')
 const index = require('./routes/index');
 const user = require('./routes/user');
+const token = require('./routes/token');
 
 const port = process.env.PORT || config.port
 
@@ -74,6 +75,7 @@ User.findOne({ id: config.admin.id })
 // router 설정
 app.use(index.routes(), index.allowedMethods());
 app.use(user.routes(), user.allowedMethods());
+app.use(token.routes(), token.allowedMethods());
 
 app.on('error', function(err, ctx) {
   console.log(err)

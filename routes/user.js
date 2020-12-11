@@ -17,7 +17,9 @@ router.post('/user/login', async (ctx, next) => {
           name: user[0].name,
           position: user[0].position
         }, config.jwt.secretKey, {
-          expiresIn: '1h' // 1시간
+          expiresIn: config.jwt.expiresIn,
+          issuer: config.jwt.issuer,
+          subject: config.jwt.subject
         })
         ctx.body = { user: { id: user[0].id, name: user[0].name, position: user[0].position }, token: token } // { 아이디, 이름, 포지션 }, token 보냄
         console.log(ctx.body)
